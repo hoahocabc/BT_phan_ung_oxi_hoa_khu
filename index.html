@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang='vi'>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài tâp hóa học ABC</title>
+
+  <!-- Sử dụng Google Fonts cho giao diện hiện đại -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$']] },
+      chtml: { scale: 0.9 },
+      svg: { fontCache: 'global' }
+    };
+    function drop(ev) {
+      ev.preventDefault();
+      var data = ev.dataTransfer.getData("text");
+      var draggable = document.getElementById(data);
+      var dropZone = ev.target;
+      while (dropZone && !dropZone.classList.contains("dropzone") && dropZone.tagName !== "BODY") {
+        dropZone = dropZone.parentNode;
+      }
+      if (!dropZone) return;
+      var label = dropZone.querySelector(".drop-label");
+      if (label) {
+         if (label.nextSibling) {
+           dropZone.insertBefore(draggable, label.nextSibling);
+         } else {
+           dropZone.appendChild(draggable);
+         }
+      } else {
+         dropZone.appendChild(draggable);
+      }
+    }
+    function allowDrop(ev) { ev.preventDefault(); }
+    function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .top-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
+    .score-box {
+      background: #4CAF50;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 1.1em;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 20px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.8em;
+      color: #333;
+    }
+    .header h2 {
+      margin: 10px 0 0;
+      font-size: 1.2em;
+      color: #777;
+    }
+    .section {
+      margin-top: 30px;
+    }
+    .section h2 {
+      font-size: 1.4em;
+      margin-bottom: 20px;
+      color: #4285f4;
+    }
+    .question {
+      margin-bottom: 30px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f2f2f2;
+    }
+    .question p {
+      margin: 0 0 10px 0;
+    }
+    .option {
+      margin: 5px 0;
+    }
+    .explanation {
+      margin-top: 10px;
+    }
+    button {
+      background: #4285f4;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    button:hover { background: #307cf1; }
+    /* Drag and drop */
+    .drag-drop-container {
+      display: flex;
+      gap: 10px;
+    }
+    .drag-column, .drop-column {
+      flex: 1;
+      background: #fff;
+      border: 1px dashed #ccc;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .draggable-item {
+      background: #e8f0fe;
+      border: 1px solid #c6dafc;
+      padding: 8px;
+      margin-bottom: 5px;
+      border-radius: 4px;
+      cursor: move;
+      text-align: center;
+    }
+    .dropzone {
+      min-height: 50px;
+      border: 1px dashed #aaa;
+      margin: 5px 0;
+      border-radius: 4px;
+      padding: 10px;
+      text-align: center;
+    }
+    .drop-label {
+      font-weight: bold;
+      color: #555;
+    }
+    /* Updated CSS for blanks in Part IV */
+    .blank-container {
+      display: inline;
+    }
+    .blank-container input.auto-expand, .blank-container span {
+      white-space: normal;
+      min-width: 60px;
+      height: 25px;
+      font-size: 18px;
+      vertical-align: baseline;
+      box-sizing: border-box;
+      overflow-wrap: break-word;
+    }
+    mjx-container[jax="CHTML"][display="true"] {
+      margin-top: 0 !important;
+      margin-bottom: -1.5em !important;
+    }
+    /* Media query cho smartphone */
+    @media only screen and (max-width: 600px) {
+      body { padding: 10px; font-size: 16px; }
+      .container { padding: 15px; }
+      .header h1 { font-size: 1.8em; }
+      .header h2 { font-size: 1.2em; }
+      .score-box { font-size: 1em; padding: 8px 12px; }
+    }
+  </style>
+
+</head>
+<body>
+  <div class='container'>
+    <div class='top-row'><div class='score-box' id='scoreDisplay'>Tổng số điểm:</div></div>
+    <div class='header'><h1>BÀI TẬP</h1><h2>(HÓA HỌC ABC)</h2></div>
+<div class='section' id='part1' data-parttype='1'>
+<h2>Phần 1: Trắc nghiệm nhiều lựa chọn (có một phương án đúng)</h2>
+<div class='question' id='part1_q1'>
+<p><strong>Câu 1:</strong><br><br>Theo quan điểm của Antoine Lavoisier ở cuối thế kỷ 18, sự khử là quá trình nào sau đây?</p>
+<div class='option'><label><input type='radio' name='part1_q1' value='A'> <strong>A.</strong>  Quá trình tách oxygen khỏi hợp chất.</label></div>
+<div class='option'><label><input type='radio' name='part1_q1' value='B'> <strong>B.</strong>  Quá trình kết hợp của một chất với oxygen.</label></div>
+<div class='option'><label><input type='radio' name='part1_q1' value='C'> <strong>C.</strong>  Quá trình giải phóng flogistone vào không khí.</label></div>
+<div class='option'><label><input type='radio' name='part1_q1' value='D'> <strong>D.</strong>  Quá trình nhận electron của một nguyên tử.</label></div>
+<div class='explanation' id='part1_q1_result' data-answer='A' data-solution='%20%3Cbr%3ELavoisier%20%C4%91%C6%B0a%20ra%20kh%C3%A1i%20ni%E1%BB%87m%20oxi%20h%C3%B3a%20l%C3%A0%20s%E1%BB%B1%20k%E1%BA%BFt%20h%E1%BB%A3p%20v%E1%BB%9Bi%20oxygen%20v%C3%A0%20s%E1%BB%B1%20kh%E1%BB%AD%20l%C3%A0%20qu%C3%A1%20tr%C3%ACnh%20t%C3%A1ch%20oxygen%20kh%E1%BB%8Fi%20h%E1%BB%A3p%20ch%E1%BA%A5t%2C.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q2'>
+<p><strong>Câu 2:</strong><br><br>Bản chất của phản ứng oxi hóa - khử theo quan điểm hiện đại (thế kỷ 20) là gì?</p>
+<div class='option'><label><input type='radio' name='part1_q2' value='A'> <strong>A.</strong>  Sự kết hợp với oxygen.</label></div>
+<div class='option'><label><input type='radio' name='part1_q2' value='B'> <strong>B.</strong>  Sự tách oxygen khỏi hợp chất.</label></div>
+<div class='option'><label><input type='radio' name='part1_q2' value='C'> <strong>C.</strong>  Sự chuyển electron giữa các chất.</label></div>
+<div class='option'><label><input type='radio' name='part1_q2' value='D'> <strong>D.</strong>  Sự thay đổi trạng thái vật lý của các chất.</label></div>
+<div class='explanation' id='part1_q2_result' data-answer='C' data-solution='%20%3Cbr%3ETh%E1%BA%BF%20k%E1%BB%B7%2020%2C%20c%C3%A1c%20nh%C3%A0%20khoa%20h%E1%BB%8Dc%20x%C3%A1c%20%C4%91%E1%BB%8Bnh%20b%E1%BA%A3n%20ch%E1%BA%A5t%20c%E1%BB%A7a%20ph%E1%BA%A3n%20%E1%BB%A9ng%20oxi%20h%C3%B3a%20-%20kh%E1%BB%AD%20l%C3%A0%20s%E1%BB%B1%20chuy%E1%BB%83n%20electron%20gi%E1%BB%AFa%20c%C3%A1c%20ch%E1%BA%A5t.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q3'>
+<p><strong>Câu 3:</strong><br><br>Quy định đúng về cách viết số oxi hóa là</p>
+<div class='option'><label><input type='radio' name='part1_q3' value='A'> <strong>A.</strong>  Dấu đặt sau số, ghi ở phía dưới ký hiệu nguyên tố.</label></div>
+<div class='option'><label><input type='radio' name='part1_q3' value='B'> <strong>B.</strong>  Dấu đặt sau số, ghi ở phía trên ký hiệu nguyên tố.</label></div>
+<div class='option'><label><input type='radio' name='part1_q3' value='C'> <strong>C.</strong>  Dấu đặt trước số, ghi ở phía trên chính giữa ký hiệu nguyên tố.</label></div>
+<div class='option'><label><input type='radio' name='part1_q3' value='D'> <strong>D.</strong>  Không cần ghi dấu, chỉ ghi số ở phía trên ký hiệu nguyên tố.</label></div>
+<div class='explanation' id='part1_q3_result' data-answer='C' data-solution='%20%3Cbr%3ED%E1%BA%A5u%20c%E1%BB%A7a%20s%E1%BB%91%20oxi%20h%C3%B3a%20%C4%91%C6%B0%E1%BB%A3c%20%C4%91%E1%BA%B7t%20%E1%BB%9F%20ph%C3%ADa%20tr%C6%B0%E1%BB%9Bc%20v%C3%A0%20ghi%20%E1%BB%9F%20ph%C3%ADa%20tr%C3%AAn%20ch%C3%ADnh%20gi%E1%BB%AFa%20k%C3%BD%20hi%E1%BB%87u%20nguy%C3%AAn%20t%E1%BB%91.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q4'>
+<p><strong>Câu 4:</strong><br><br>Số oxi hóa của nguyên tử trong các đơn chất bằng bao nhiêu?</p>
+<div class='option'><label><input type='radio' name='part1_q4' value='A'> <strong>A.</strong>  0.</label></div>
+<div class='option'><label><input type='radio' name='part1_q4' value='B'> <strong>B.</strong>  +1.</label></div>
+<div class='option'><label><input type='radio' name='part1_q4' value='C'> <strong>C.</strong>  -1.</label></div>
+<div class='option'><label><input type='radio' name='part1_q4' value='D'> <strong>D.</strong>  Bằng hóa trị của nguyên tố đó.</label></div>
+<div class='explanation' id='part1_q4_result' data-answer='A' data-solution='%20%3Cbr%3ETheo%20quy%20t%E1%BA%AFc%20x%C3%A1c%20%C4%91%E1%BB%8Bnh%20s%E1%BB%91%20oxi%20h%C3%B3a%2C%20s%E1%BB%91%20oxi%20h%C3%B3a%20c%E1%BB%A7a%20%C4%91%C6%A1n%20ch%E1%BA%A5t%20b%E1%BA%B1ng%200.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q5'>
+<p><strong>Câu 5:</strong><br><br>Trong hợp chất, số oxi hóa của hydrogen thường là bao nhiêu (trừ hợp chất với kim loại)?</p>
+<div class='option'><label><input type='radio' name='part1_q5' value='A'> <strong>A.</strong>  -1.</label></div>
+<div class='option'><label><input type='radio' name='part1_q5' value='B'> <strong>B.</strong>  +1.</label></div>
+<div class='option'><label><input type='radio' name='part1_q5' value='C'> <strong>C.</strong>  0.</label></div>
+<div class='option'><label><input type='radio' name='part1_q5' value='D'> <strong>D.</strong>  +2.</label></div>
+<div class='explanation' id='part1_q5_result' data-answer='B' data-solution='%20%3Cbr%3ETrong%20h%E1%BB%A3p%20ch%E1%BA%A5t%2C%20s%E1%BB%91%20oxi%20h%C3%B3a%20c%E1%BB%A7a%20hydrogen%20b%E1%BA%B1ng%20%2B1%20%28tr%E1%BB%AB%20h%E1%BB%A3p%20ch%E1%BA%A5t%20v%E1%BB%9Bi%20kim%20lo%E1%BA%A1i%29.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q6'>
+<p><strong>Câu 6:</strong><br><br>Số oxi hóa của oxygen trong hợp chất thường là -2, ngoại trừ các trường hợp nào sau đây?</p>
+<div class='option'><label><input type='radio' name='part1_q6' value='A'> <strong>A.</strong>  Oxide và acid.</label></div>
+<div class='option'><label><input type='radio' name='part1_q6' value='B'> <strong>B.</strong>  Muối sulfate và nitrate.</label></div>
+<div class='option'><label><input type='radio' name='part1_q6' value='C'> <strong>C.</strong>  Hợp chất với fluorine và peroxide.</label></div>
+<div class='option'><label><input type='radio' name='part1_q6' value='D'> <strong>D.</strong>  Hợp chất với kim loại kiềm.</label></div>
+<div class='explanation' id='part1_q6_result' data-answer='C' data-solution='%20%3Cbr%3ETheo%20quy%20t%E1%BA%AFc%2C%20s%E1%BB%91%20oxi%20h%C3%B3a%20c%E1%BB%A7a%20oxygen%20b%E1%BA%B1ng%20-2%20tr%E1%BB%AB%20h%E1%BB%A3p%20ch%E1%BA%A5t%20v%E1%BB%9Bi%20fluorine%20v%C3%A0%20peroxide.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q7'>
+<p><strong>Câu 7:</strong><br><br>Số oxi hóa của nguyên tử Mn trong hợp chất KMnO₄ là bao nhiêu?</p>
+<div class='option'><label><input type='radio' name='part1_q7' value='A'> <strong>A.</strong>  +2.</label></div>
+<div class='option'><label><input type='radio' name='part1_q7' value='B'> <strong>B.</strong>  +4.</label></div>
+<div class='option'><label><input type='radio' name='part1_q7' value='C'> <strong>C.</strong>  +6.</label></div>
+<div class='option'><label><input type='radio' name='part1_q7' value='D'> <strong>D.</strong>  +7.</label></div>
+<div class='explanation' id='part1_q7_result' data-answer='D' data-solution='%20%3Cbr%3EK%20c%C3%B3%20s%E1%BB%91%20oxi%20h%C3%B3a%20%2B1%2C%20O%20c%C3%B3%20s%E1%BB%91%20oxi%20h%C3%B3a%20-2.%20Ta%20c%C3%B3%3A%20%28%2B1%29%20%2B%20x%20%2B%204.%28-2%29%20%3D%200%20%3D%3E%20x%20%3D%20%2B7.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q8'>
+<p><strong>Câu 8:</strong><br><br>Xác định số oxi hóa của S trong phân tử H₂SO₄.</p>
+<div class='option'><label><input type='radio' name='part1_q8' value='A'> <strong>A.</strong>  +2.</label></div>
+<div class='option'><label><input type='radio' name='part1_q8' value='B'> <strong>B.</strong>  +4.</label></div>
+<div class='option'><label><input type='radio' name='part1_q8' value='C'> <strong>C.</strong>  +6.</label></div>
+<div class='option'><label><input type='radio' name='part1_q8' value='D'> <strong>D.</strong>  -2.</label></div>
+<div class='explanation' id='part1_q8_result' data-answer='C' data-solution='%20%3Cbr%3EH%20l%C3%A0%20%2B1%2C%20O%20l%C3%A0%20-2.%20Ta%20c%C3%B3%3A%202.%28%2B1%29%20%2B%20x%20%2B%204.%28-2%29%20%3D%200%20%3D%3E%20x%20%3D%20%2B6.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q9'>
+<p><strong>Câu 9:</strong><br><br>Số oxi hóa của sắt (Fe) trong oxit sắt từ (Fe₃O₄) được xác định là</p>
+<div class='option'><label><input type='radio' name='part1_q9' value='A'> <strong>A.</strong>  +2.</label></div>
+<div class='option'><label><input type='radio' name='part1_q9' value='B'> <strong>B.</strong>  +3.</label></div>
+<div class='option'><label><input type='radio' name='part1_q9' value='C'> <strong>C.</strong>  +8/3.</label></div>
+<div class='option'><label><input type='radio' name='part1_q9' value='D'> <strong>D.</strong>  +4.</label></div>
+<div class='explanation' id='part1_q9_result' data-answer='C' data-solution='%20%C4%90%E1%BA%B7t%20s%E1%BB%91%20oxi%20h%C3%B3a%20c%E1%BB%A7a%20Fe%20l%C3%A0%20x%2C%20ta%20c%C3%B3%3A%203x%20%2B%204.%28-2%29%20%3D%200%20%3D%3E%20x%20%3D%208%2F3.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q10'>
+<p><strong>Câu 10:</strong><br><br>Trong ion đơn nguyên tử, số oxi hóa của nguyên tố bằng</p>
+<div class='option'><label><input type='radio' name='part1_q10' value='A'> <strong>A.</strong>  Điện tích của ion đó.</label></div>
+<div class='option'><label><input type='radio' name='part1_q10' value='B'> <strong>B.</strong>  0.</label></div>
+<div class='option'><label><input type='radio' name='part1_q10' value='C'> <strong>C.</strong>  Tổng điện tích các nguyên tử.</label></div>
+<div class='option'><label><input type='radio' name='part1_q10' value='D'> <strong>D.</strong>  Hóa trị của nguyên tố đó.</label></div>
+<div class='explanation' id='part1_q10_result' data-answer='A' data-solution='%20V%E1%BB%9Bi%20ion%2C%20s%E1%BB%91%20oxi%20h%C3%B3a%20c%E1%BB%A7a%20ion%20b%E1%BA%B1ng%20%C4%91i%E1%BB%87n%20t%C3%ADch%20c%E1%BB%A7a%20ion.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q11'>
+<p><strong>Câu 11:</strong><br><br>Chất khử là chất thực hiện quá trình nào sau đây?</p>
+<div class='option'><label><input type='radio' name='part1_q11' value='A'> <strong>A.</strong>  Nhận electron, có số oxi hóa giảm.</label></div>
+<div class='option'><label><input type='radio' name='part1_q11' value='B'> <strong>B.</strong>  Nhường electron, có số oxi hóa tăng.</label></div>
+<div class='option'><label><input type='radio' name='part1_q11' value='C'> <strong>C.</strong>  Nhận electron, có số oxi hóa tăng.</label></div>
+<div class='option'><label><input type='radio' name='part1_q11' value='D'> <strong>D.</strong>  Nhường electron, có số oxi hóa giảm.</label></div>
+<div class='explanation' id='part1_q11_result' data-answer='B' data-solution='%20Ch%E1%BA%A5t%20kh%E1%BB%AD%20%28ch%E1%BA%A5t%20b%E1%BB%8B%20oxi%20h%C3%B3a%29%20l%C3%A0%20ch%E1%BA%A5t%20nh%C6%B0%E1%BB%9Dng%20electron%2C%20c%C3%B3%20s%E1%BB%91%20oxi%20h%C3%B3a%20t%C4%83ng.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q12'>
+<p><strong>Câu 12:</strong><br><br>Khẩu quyết nào sau đây giúp nhớ nhanh về chất khử và chất oxi hóa?</p>
+<div class='option'><label><input type='radio' name='part1_q12' value='A'> <strong>A.</strong>  Khử nhận, ô cho.</label></div>
+<div class='option'><label><input type='radio' name='part1_q12' value='B'> <strong>B.</strong>  Khử cho - ô nhận, khử tăng - ô giảm.</label></div>
+<div class='option'><label><input type='radio' name='part1_q12' value='C'> <strong>C.</strong>  Khử giảm, ô tăng.</label></div>
+<div class='option'><label><input type='radio' name='part1_q12' value='D'> <strong>D.</strong>  Khử nhận electron, ô nhường electron.</label></div>
+<div class='explanation' id='part1_q12_result' data-answer='B' data-solution='%20Kh%E1%BA%A9u%20quy%E1%BA%BFt%20ghi%20nh%E1%BB%9B%20l%C3%A0%20%22Kh%E1%BB%AD%20cho%20%C3%B4%20nh%E1%BA%ADn%22%20v%C3%A0%20%22Kh%E1%BB%AD%20t%C4%83ng%20%C3%B4%20gi%E1%BA%A3m%22%2C.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q13'>
+<p><strong>Câu 13:</strong><br><br>Quá trình oxi hóa (sự oxi hóa) là</p>
+<div class='option'><label><input type='radio' name='part1_q13' value='A'> <strong>A.</strong>  Quá trình nhận electron.</label></div>
+<div class='option'><label><input type='radio' name='part1_q13' value='B'> <strong>B.</strong>  Quá trình nhường electron.</label></div>
+<div class='option'><label><input type='radio' name='part1_q13' value='C'> <strong>C.</strong>  Quá trình làm giảm số oxi hóa.</label></div>
+<div class='option'><label><input type='radio' name='part1_q13' value='D'> <strong>D.</strong>  Quá trình kết hợp với hydrogen.</label></div>
+<div class='explanation' id='part1_q13_result' data-answer='B' data-solution='%20Qu%C3%A1%20tr%C3%ACnh%20oxi%20h%C3%B3a%20hay%20c%C3%B2n%20g%E1%BB%8Di%20l%C3%A0%20s%E1%BB%B1%20oxi%20h%C3%B3a%20l%C3%A0%20qu%C3%A1%20tr%C3%ACnh%20nh%C6%B0%E1%BB%9Dng%20electron.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q14'>
+<p><strong>Câu 14:</strong><br><br>Trong phản ứng: Mg + S -> MgS, chất nào đóng vai trò là chất oxi hóa?</p>
+<div class='option'><label><input type='radio' name='part1_q14' value='A'> <strong>A.</strong>  Mg.</label></div>
+<div class='option'><label><input type='radio' name='part1_q14' value='B'> <strong>B.</strong>  S.</label></div>
+<div class='option'><label><input type='radio' name='part1_q14' value='C'> <strong>C.</strong>  MgS.</label></div>
+<div class='option'><label><input type='radio' name='part1_q14' value='D'> <strong>D.</strong>  Cả Mg và S.</label></div>
+<div class='explanation' id='part1_q14_result' data-answer='B' data-solution='%20S%20c%C3%B3%20s%E1%BB%91%20oxi%20h%C3%B3a%20gi%E1%BA%A3m%20t%E1%BB%AB%200%20xu%E1%BB%91ng%20-2%20n%C3%AAn%20S%20l%C3%A0%20ch%E1%BA%A5t%20oxi%20h%C3%B3a%20%28nh%E1%BA%ADn%20electron%29.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q15'>
+<p><strong>Câu 15:</strong><br><br>Phản ứng oxi hóa - khử là phản ứng hóa học có đặc điểm gì?</p>
+<div class='option'><label><input type='radio' name='part1_q15' value='A'> <strong>A.</strong>  Chỉ xảy ra quá trình nhường electron.</label></div>
+<div class='option'><label><input type='radio' name='part1_q15' value='B'> <strong>B.</strong>  Chỉ xảy ra quá trình nhận electron.</label></div>
+<div class='option'><label><input type='radio' name='part1_q15' value='C'> <strong>C.</strong>  Xảy ra đồng thời quá trình nhường và quá trình nhận electron.</label></div>
+<div class='option'><label><input type='radio' name='part1_q15' value='D'> <strong>D.</strong>  Không có sự thay đổi số oxi hóa của các nguyên tử.</label></div>
+<div class='explanation' id='part1_q15_result' data-answer='C' data-solution='%20%3Cbr%3EPh%E1%BA%A3n%20%E1%BB%A9ng%20oxi%20h%C3%B3a%20-%20kh%E1%BB%AD%20l%C3%A0%20ph%E1%BA%A3n%20%E1%BB%A9ng%20x%E1%BA%A3y%20ra%20%C4%91%E1%BB%93ng%20th%E1%BB%9Di%20qu%C3%A1%20tr%C3%ACnh%20nh%C6%B0%E1%BB%9Dng%20v%C3%A0%20qu%C3%A1%20tr%C3%ACnh%20nh%E1%BA%ADn%20electron.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q16'>
+<p><strong>Câu 16:</strong><br><br>Trong phương pháp thăng bằng electron, bước đầu tiên cần thực hiện là gì?</p>
+<div class='option'><label><input type='radio' name='part1_q16' value='A'> <strong>A.</strong>  Xác định số oxi hóa của các nguyên tử để tìm chất thay đổi số oxi hóa.</label></div>
+<div class='option'><label><input type='radio' name='part1_q16' value='B'> <strong>B.</strong>  Viết các quá trình nhường và nhận electron.</label></div>
+<div class='option'><label><input type='radio' name='part1_q16' value='C'> <strong>C.</strong>  Tìm hệ số sao cho số electron nhường bằng số electron nhận.</label></div>
+<div class='option'><label><input type='radio' name='part1_q16' value='D'> <strong>D.</strong>  Cân bằng số nguyên tử oxygen và hydrogen.</label></div>
+<div class='explanation' id='part1_q16_result' data-answer='A' data-solution='%20%3Cbr%3EB%C6%B0%E1%BB%9Bc%201%20c%E1%BB%A7a%20ph%C6%B0%C6%A1ng%20ph%C3%A1p%20c%C3%A2n%20b%E1%BA%B1ng%20l%C3%A0%20x%C3%A1c%20%C4%91%E1%BB%8Bnh%20s%E1%BB%91%20oxi%20h%C3%B3a%20c%E1%BB%A7a%20c%C3%A1c%20nguy%C3%AAn%20t%E1%BB%AD.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q17'>
+<p><strong>Câu 17:</strong><br><br>Nguyên tắc căn bản của phương pháp thăng bằng electron là</p>
+<div class='option'><label><input type='radio' name='part1_q17' value='A'> <strong>A.</strong>  Số oxi hóa của chất khử phải bằng số oxi hóa của chất oxi hóa.</label></div>
+<div class='option'><label><input type='radio' name='part1_q17' value='B'> <strong>B.</strong>  Tổng khối lượng chất tham gia bằng tổng khối lượng sản phẩm.</label></div>
+<div class='option'><label><input type='radio' name='part1_q17' value='C'> <strong>C.</strong>  Tổng số electron nhường phải bằng tổng số electron nhận.</label></div>
+<div class='option'><label><input type='radio' name='part1_q17' value='D'> <strong>D.</strong>  Số nguyên tử hydrogen phải bằng số nguyên tử oxygen.</label></div>
+<div class='explanation' id='part1_q17_result' data-answer='C' data-solution='%20%3Cbr%3ENguy%C3%AAn%20t%E1%BA%AFc%20c%C4%83n%20b%E1%BA%A3n%20l%C3%A0%20%C4%91%E1%BA%A3m%20b%E1%BA%A3o%20s%E1%BB%91%20electron%20nh%C6%B0%E1%BB%9Dng%20b%E1%BA%B1ng%20s%E1%BB%91%20electron%20nh%E1%BA%ADn.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q18'>
+<p><strong>Câu 18:</strong><br><br>Khi viết bán phản ứng, mẹo để xác định vị trí ghi dấu cộng (+) electron là gì?</p>
+<div class='option'><label><input type='radio' name='part1_q18' value='A'> <strong>A.</strong>  Luôn ghi ở bên trái mũi tên.</label></div>
+<div class='option'><label><input type='radio' name='part1_q18' value='B'> <strong>B.</strong>  Luôn ghi ở bên phải mũi tên.</label></div>
+<div class='option'><label><input type='radio' name='part1_q18' value='C'> <strong>C.</strong>  Ghi ở vế có mức oxi hóa cao hơn.</label></div>
+<div class='option'><label><input type='radio' name='part1_q18' value='D'> <strong>D.</strong>  Ghi ở vế có mức oxi hóa thấp hơn.</label></div>
+<div class='explanation' id='part1_q18_result' data-answer='C' data-solution='%20%3Cbr%3EM%E1%BA%B9o%20nh%E1%BB%8F%20l%C3%A0%20d%E1%BA%A5u%20c%E1%BB%99ng%20lu%C3%B4n%20%C4%91%C6%B0%E1%BB%A3c%20ghi%20%E1%BB%9F%20v%E1%BA%BF%20c%C3%B3%20s%E1%BB%91%20oxi%20h%C3%B3a%20cao%20h%C6%A1n.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q19'>
+<p><strong>Câu 19:</strong><br><br>Thứ tự thường dùng để cân bằng các nguyên tử còn lại sau khi đã đặt hệ số electron là</p>
+<div class='option'><label><input type='radio' name='part1_q19' value='A'> <strong>A.</strong>  Oxygen -> Hydrogen -> Kim loại -> Phi kim.</label></div>
+<div class='option'><label><input type='radio' name='part1_q19' value='B'> <strong>B.</strong>  Kim loại -> Phi kim -> Hydrogen -> Oxygen.</label></div>
+<div class='option'><label><input type='radio' name='part1_q19' value='C'> <strong>C.</strong>  Phi kim -> Kim loại -> Oxygen -> Hydrogen.</label></div>
+<div class='option'><label><input type='radio' name='part1_q19' value='D'> <strong>D.</strong>  Hydrogen -> Oxygen -> Phi kim -> Kim loại.</label></div>
+<div class='explanation' id='part1_q19_result' data-answer='B' data-solution='%20%3Cbr%3ETh%E1%BB%A9%20t%E1%BB%B1%20th%C6%B0%E1%BB%9Dng%20g%E1%BA%B7p%20l%C3%A0%20Kim%20lo%E1%BA%A1i%20-%3E%20Phi%20kim%20-%3E%20Hydrogen%20-%3E%20Oxygen.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q20'>
+<p><strong>Câu 20:</strong><br><br>Để tính số electron nhường hoặc nhận trong một bán phản ứng, ta lấy</p>
+<div class='option'><label><input type='radio' name='part1_q20' value='A'> <strong>A.</strong>  Mức oxi hóa thấp trừ mức oxi hóa cao.</label></div>
+<div class='option'><label><input type='radio' name='part1_q20' value='B'> <strong>B.</strong>  Mức oxi hóa cao trừ mức oxi hóa thấp.</label></div>
+<div class='option'><label><input type='radio' name='part1_q20' value='C'> <strong>C.</strong>  Tổng số oxi hóa của hai vế cộng lại.</label></div>
+<div class='option'><label><input type='radio' name='part1_q20' value='D'> <strong>D.</strong>  Trị tuyệt đối của hiệu số nguyên tử.</label></div>
+<div class='explanation' id='part1_q20_result' data-answer='B' data-solution='%20%3Cbr%3E%C4%90%E1%BB%83%20t%C3%ADnh%20s%E1%BB%91%20electron%2C%20ta%20ch%E1%BB%89%20c%E1%BA%A7n%20l%E1%BA%A5y%20m%E1%BB%A9c%20oxi%20h%C3%B3a%20cao%20tr%E1%BB%AB%20m%E1%BB%A9c%20oxi%20h%C3%B3a%20th%E1%BA%A5p.'></div>
+</div>
+<div class='question' id='part1_q21'>
+<p><strong>Câu 21:</strong><br><br>Vai trò của phản ứng oxi hóa - khử đối với sự tồn tại của sự sống trên Trái Đất là gì?</p>
+<div class='option'><label><input type='radio' name='part1_q21' value='A'> <strong>A.</strong>  Chỉ giúp tạo ra ánh sáng mặt trời.</label></div>
+<div class='option'><label><input type='radio' name='part1_q21' value='B'> <strong>B.</strong>  Duy trì quá trình hô hấp và chuyển hóa năng lượng trong cơ thể.</label></div>
+<div class='option'><label><input type='radio' name='part1_q21' value='C'> <strong>C.</strong>  Giúp thực vật hấp thụ nước từ lòng đất.</label></div>
+<div class='option'><label><input type='radio' name='part1_q21' value='D'> <strong>D.</strong>  Tạo ra lực hấp dẫn để giữ bầu khí quyển.</label></div>
+<div class='explanation' id='part1_q21_result' data-answer='B' data-solution='%20%3Cbr%3EN%E1%BA%BFu%20kh%C3%B4ng%20c%C3%B3%20ph%E1%BA%A3n%20%E1%BB%A9ng%20oxi%20h%C3%B3a%20-%20kh%E1%BB%AD%20s%E1%BA%BD%20kh%C3%B4ng%20c%C3%B3%20qu%C3%A1%20tr%C3%ACnh%20h%C3%B4%20h%E1%BA%A5p%2C%20kh%C3%B4ng%20c%C3%B3%20s%E1%BB%B1%20chuy%E1%BB%83n%20h%C3%B3a%20n%C4%83ng%20l%C6%B0%E1%BB%A3ng%20v%C3%A0%20s%E1%BB%B1%20s%E1%BB%91ng%20tr%C3%AAn%20Tr%C3%A1i%20%C4%90%E1%BA%A5t%20kh%C3%B4ng%20th%E1%BB%83%20t%E1%BB%93n%20t%E1%BA%A1i.'></div>
+</div>
+<div class='question' id='part1_q22'>
+<p><strong>Câu 22:</strong><br><br>Từ thời cổ đại, con người đã vô tình sử dụng phản ứng oxi hóa - khử trong quá trình luyện kim bằng cách nào?</p>
+<div class='option'><label><input type='radio' name='part1_q22' value='A'> <strong>A.</strong>  Dùng dòng điện để tách kim loại.</label></div>
+<div class='option'><label><input type='radio' name='part1_q22' value='B'> <strong>B.</strong>  Dùng nước để hòa tan quặng kim loại.</label></div>
+<div class='option'><label><input type='radio' name='part1_q22' value='C'> <strong>C.</strong>  Dùng than để tách kim loại khỏi quặng.</label></div>
+<div class='option'><label><input type='radio' name='part1_q22' value='D'> <strong>D.</strong>  Dùng acid để ăn mòn quặng đá.</label></div>
+<div class='explanation' id='part1_q22_result' data-answer='C' data-solution='%20%3Cbr%3ET%E1%BB%AB%20th%E1%BB%9Di%20c%E1%BB%95%20%C4%91%E1%BA%A1i%2C%20trong%20luy%E1%BB%87n%20kim%2C%20con%20ng%C6%B0%E1%BB%9Di%20%C4%91%C3%A3%20d%C3%B9ng%20than%20%C4%91%E1%BB%83%20t%C3%A1ch%20kim%20lo%E1%BA%A1i%20kh%E1%BB%8Fi%20qu%E1%BA%B7ng%2C%20th%E1%BB%B1c%20ch%E1%BA%A5t%20%C4%91%C3%B3%20l%C3%A0%20c%C3%A1c%20ph%E1%BA%A3n%20%E1%BB%A9ng%20oxi%20h%C3%B3a%20-%20kh%E1%BB%AD.%3Cbr%3E'></div>
+</div>
+</div>
+<div class='section' id='part2' data-parttype='2'>
+<h2>Phần 2: Trắc nghiệm nhiều lựa chọn (có thể có nhiều đáp án đúng)</h2>
+<div class='question' id='part2_q1'>
+<p><strong>Câu 1:</strong><br><br>Những hiện tượng nào sau đây có bản chất là phản ứng oxi hóa - khử?</p>
+<div class='option'><label><input type='checkbox' name='part2_q1' value='A'> <strong>A.</strong>  Sự cháy của bình khí gas.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q1' value='B'> <strong>B.</strong>  Sự hô hấp của con người.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q1' value='C'> <strong>C.</strong>  Sự gỉ sét của đinh sắt ngoài không khí.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q1' value='D'> <strong>D.</strong>  Sự hòa tan đường vào nước.</label></div>
+<div class='explanation' id='part2_q1_result' data-answer='A,B,C' data-solution='%20%3Cbr%3EC%C3%A1c%20qu%C3%A1%20tr%C3%ACnh%20%C4%91%E1%BB%91t%20ch%C3%A1y%2C%20h%C3%B4%20h%E1%BA%A5p%2C%20g%E1%BB%89%20th%C3%A9p%20%C4%91%E1%BB%81u%20l%C3%A0%20ph%E1%BA%A3n%20%E1%BB%A9ng%20oxi%20h%C3%B3a%20-%20kh%E1%BB%AD.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part2_q2'>
+<p><strong>Câu 2:</strong><br><br>Phát biểu nào sau đây là đúng về chất khử?</p>
+<div class='option'><label><input type='checkbox' name='part2_q2' value='A'> <strong>A.</strong>  Là chất nhường electron.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q2' value='B'> <strong>B.</strong>  Là chất có số oxi hóa giảm sau phản ứng.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q2' value='C'> <strong>C.</strong>  Là chất chứa nguyên tử có số oxi hóa tăng sau phản ứng.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q2' value='D'> <strong>D.</strong>  Còn được gọi là chất bị oxi hóa.</label></div>
+<div class='explanation' id='part2_q2_result' data-answer='A,C,D' data-solution='%20%3Cbr%3ECh%E1%BA%A5t%20kh%E1%BB%AD%20l%C3%A0%20ch%E1%BA%A5t%20nh%C6%B0%E1%BB%9Dng%20electron%2C%20c%C3%B3%20s%E1%BB%91%20oxi%20h%C3%B3a%20t%C4%83ng%20v%C3%A0%20%C4%91%C6%B0%E1%BB%A3c%20g%E1%BB%8Di%20l%C3%A0%20ch%E1%BA%A5t%20b%E1%BB%8B%20oxi%20h%C3%B3a.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part2_q3'>
+<p><strong>Câu 3:</strong><br><br>Các quy tắc nào sau đây dùng để xác định số oxi hóa trong hợp chất?</p>
+<div class='option'><label><input type='checkbox' name='part2_q3' value='A'> <strong>A.</strong>  Tổng số oxi hóa của các nguyên tử trong hợp chất trung hòa bằng 0.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q3' value='B'> <strong>B.</strong>  Trong hợp chất, kim loại có số oxi hóa dương bằng hóa trị của nó.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q3' value='C'> <strong>C.</strong>  Hydrogen luôn có số oxi hóa là -1 trong mọi trường hợp.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q3' value='D'> <strong>D.</strong>  Số oxi hóa của ion bằng điện tích của ion đó.</label></div>
+<div class='explanation' id='part2_q3_result' data-answer='A,B,D' data-solution='%20%3Cbr%3EHydrogen%20th%C6%B0%E1%BB%9Dng%20l%C3%A0%20%2B1.%20C%C3%A1c%20ph%C6%B0%C6%A1ng%20%C3%A1n%20A%2C%20B%2C%20D%20%C4%91%E1%BB%81u%20l%C3%A0%20quy%20t%E1%BA%AFc%20%C4%91%C3%BAng.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part2_q4'>
+<p><strong>Câu 4:</strong><br><br>Trong phương pháp thăng bằng electron, khi viết quá trình oxi hóa của các chất có chỉ số dưới (ví dụ P₂, O₂, Fe₃O₄), ta cần lưu ý điều gì?</p>
+<div class='option'><label><input type='checkbox' name='part2_q4' value='A'> <strong>A.</strong>  Nên mang theo chỉ số dưới của nguyên tử đó vào bán phản ứng.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q4' value='B'> <strong>B.</strong>  Phải cân bằng số lượng nguyên tử ở hai vế của bán phản ứng trước khi tính số electron.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q4' value='C'> <strong>C.</strong>  Chỉ cần ghi nguyên tử đơn lẻ, không cần quan tâm chỉ số.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q4' value='D'> <strong>D.</strong>  Tính tổng mức oxi hóa của tất cả nguyên tử ở mỗi vế rồi mới thực hiện phép trừ.</label></div>
+<div class='explanation' id='part2_q4_result' data-answer='A,B,D' data-solution='%20%3Cbr%3ETheo%20video%2C%20c%E1%BA%A7n%20mang%20theo%20ch%E1%BB%89%20s%E1%BB%91%20d%C6%B0%E1%BB%9Bi%20v%C3%A0%20c%C3%A2n%20b%E1%BA%B1ng%20s%E1%BB%91%20nguy%C3%AAn%20t%E1%BB%AD%20tr%C6%B0%E1%BB%9Bc%20khi%20x%C3%A1c%20%C4%91%E1%BB%8Bnh%20s%E1%BB%91%20electron%20nh%C6%B0%E1%BB%9Dng%2Fnh%E1%BA%ADn%2C.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part2_q5'>
+<p><strong>Câu 5:</strong><br><br>Khi gặp các phương trình oxi hóa - khử phức tạp (như ví dụ 5 trong video), ta có thể sử dụng những cách nào để cân bằng?</p>
+<div class='option'><label><input type='checkbox' name='part2_q5' value='A'> <strong>A.</strong>  Suy luận logic dựa trên sự kết hợp nguyên tử (ví dụ oxygen tạo nước).</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q5' value='B'> <strong>B.</strong>  Đặt ẩn số và lập hệ phương trình toán học dựa trên bảo toàn nguyên tố.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q5' value='C'> <strong>C.</strong>  Chỉ dùng phương pháp thử sai cho đến khi bằng thì thôi.</label></div>
+<div class='option'><label><input type='checkbox' name='part2_q5' value='D'> <strong>D.</strong>  Không cần cân bằng vì các phương trình này không có quy luật.</label></div>
+<div class='explanation' id='part2_q5_result' data-answer='A,B' data-solution='%20%3Cbr%3EVideo%20gi%E1%BB%9Bi%20thi%E1%BB%87u%20hai%20c%C3%A1ch%20cho%20ph%C6%B0%C6%A1ng%20tr%C3%ACnh%20kh%C3%B3%3A%20suy%20lu%E1%BA%ADn%20logic%20v%C3%A0%20%C4%91%E1%BA%B7t%20%E1%BA%A9n%20s%E1%BB%91%20l%E1%BA%ADp%20h%E1%BB%87%20ph%C6%B0%C6%A1ng%20tr%C3%ACnh.%3Cbr%3E'></div>
+</div>
+</div>
+<div class='section' id='part3' data-parttype='3'>
+<h2>Phần 3: Trắc nghiệm trả lời ngắn</h2>
+<div class='question' id='part3_q1'>
+<p><strong>Câu 1:</strong><br><br>Xác định số oxi hóa của nguyên tử Nitrogen trong ion NO₃⁻.</p>
+<div>Đáp án của bạn: <input type='text' id='part3_q1_input' class='auto-expand' style='width:60px; height:25px; font-size:18px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></div>
+<div class='explanation' id='part3_q1_result' data-answer=' +5' data-solution='%20%3Cbr%3E%C4%90%E1%BA%B7t%20x%20l%C3%A0%20s%E1%BB%91%20oxi%20h%C3%B3a%20c%E1%BB%A7a%20N%3A%20x%20%2B%203.%28-2%29%20%3D%20-1%20%3D%3E%20x%20%3D%20%2B5.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part3_q2'>
+<p><strong>Câu 2:</strong><br><br>Xác định số oxi hóa của nguyên tử Nitrogen trong ion NH₄⁺.</p>
+<div>Đáp án của bạn: <input type='text' id='part3_q2_input' class='auto-expand' style='width:60px; height:25px; font-size:18px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></div>
+<div class='explanation' id='part3_q2_result' data-answer=' -3' data-solution='%20%3Cbr%3E%C4%90%E1%BA%B7t%20x%20l%C3%A0%20s%E1%BB%91%20oxi%20h%C3%B3a%20c%E1%BB%A7a%20N%3A%20x%20%2B%204.%28%2B1%29%20%3D%20%2B1%20%3D%3E%20x%20%3D%20-3.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part3_q3'>
+<p><strong>Câu 3:</strong><br><br>Trong phản ứng giữa P và O₂ tạo ra P₂O₅, một phân tử O₂ đã nhận vào bao nhiêu electron?</p>
+<div>Đáp án của bạn: <input type='text' id='part3_q3_input' class='auto-expand' style='width:60px; height:25px; font-size:18px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></div>
+<div class='explanation' id='part3_q3_result' data-answer=' 4' data-solution='%20%3Cbr%3EQu%C3%A1%20tr%C3%ACnh%3A%20O%E2%82%82%E2%81%B0%20%2B%204e%20-%3E%202O%E2%81%BB%C2%B2.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part3_q4'>
+<p><strong>Câu 4:</strong><br><br>Số oxi hóa của nguyên tử Aluminium (nhôm) trong hợp chất Al₂(SO₄)₃ là bao nhiêu?</p>
+<div>Đáp án của bạn: <input type='text' id='part3_q4_input' class='auto-expand' style='width:60px; height:25px; font-size:18px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></div>
+<div class='explanation' id='part3_q4_result' data-answer=' +3' data-solution='%20%3Cbr%3ENh%C3%B4m%20l%C3%A0%20kim%20lo%E1%BA%A1i%20c%C3%B3%20h%C3%B3a%20tr%E1%BB%8B%203%20n%C3%AAn%20s%E1%BB%91%20oxi%20h%C3%B3a%20l%C3%A0%20%2B3.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part3_q5'>
+<p><strong>Câu 5:</strong><br><br>Khi cân bằng phản ứng Al + HNO₃ -> Al(NO₃)₃ + N₂ + H₂O, hệ số của Al là bao nhiêu?</p>
+<div>Đáp án của bạn: <input type='text' id='part3_q5_input' class='auto-expand' style='width:60px; height:25px; font-size:18px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></div>
+<div class='explanation' id='part3_q5_result' data-answer=' 10' data-solution='%20%3Cbr%3EQu%C3%A1%20tr%C3%ACnh%20nh%C6%B0%E1%BB%9Dng%3A%20Al%E2%81%B0%20-%3E%20Al%E2%81%BA%C2%B3%20%2B%203e.%20Qu%C3%A1%20tr%C3%ACnh%20nh%E1%BA%ADn%3A%202N%E2%81%BA%E2%81%B5%20%2B%2010e%20-%3E%20N%E2%82%82%E2%81%B0.%20Nh%C3%A2n%20ch%C3%A9o%20h%E1%BB%87%20s%E1%BB%91%2010%20cho%20Al%20v%C3%A0%203%20cho%20N%E2%82%82O%2C.%3Cbr%3E'></div>
+</div>
+</div>
+<div class='section' id='part4' data-parttype='4'>
+<h2>Phần 4: Trắc nghiệm điền khuyết</h2>
+<div class='question' id='part4_q1'>
+<p><strong>Câu 1:</strong><br><br>Phản ứng oxi hóa - khử là phản ứng có sự thay đổi <span class='blank-container'><input type='text' id='part4_q1_blank1' data-answer=' số oxi hóa' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> của một số nguyên tử. Trong đó, chất khử là chất <span class='blank-container'><input type='text' id='part4_q1_blank2' data-answer=' nhường|| cho' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> electron.</p>
+<div class='explanation' id='part4_q1_result' data-solution='Ph%E1%BA%A3n%20%E1%BB%A9ng%20oxi%20h%C3%B3a%20kh%E1%BB%AD%20c%C3%B3%20s%E1%BB%B1%20thay%20%C4%91%E1%BB%95i%20s%E1%BB%91%20oxi%20h%C3%B3a%2C%20ch%E1%BA%A5t%20kh%E1%BB%AD%20nh%C6%B0%E1%BB%9Dng%20electron%2C.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part4_q2'>
+<p><strong>Câu 2:</strong><br><br>Theo khẩu quyết nhớ nhanh về redox: "Khử <span class='blank-container'><input type='text' id='part4_q2_blank1' data-answer=' cho' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> - O <span class='blank-container'><input type='text' id='part4_q2_blank2' data-answer=' nhận' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span>", "Khử <span class='blank-container'><input type='text' id='part4_q2_blank3' data-answer=' tăng' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> - O <span class='blank-container'><input type='text' id='part4_q2_blank4' data-answer=' giảm' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span>".</p>
+<div class='explanation' id='part4_q2_result' data-solution='Kh%E1%BA%A9u%20quy%E1%BA%BFt%20l%C3%A0%20%22Kh%E1%BB%AD%20cho%20-%20O%20nh%E1%BA%ADn%22%20v%C3%A0%20%22Kh%E1%BB%AD%20t%C4%83ng%20-%20O%20gi%E1%BA%A3m%22.%3Cbr%3E%3Cbr%3E'></div>
+</div>
+<div class='question' id='part4_q3'>
+<p><strong>Câu 3:</strong><br><br>Trong phương pháp thăng bằng electron, hệ số được chọn sao cho tổng số electron <span class='blank-container'><input type='text' id='part4_q3_blank1' data-answer=' nhường' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> bằng tổng số electron <span class='blank-container'><input type='text' id='part4_q3_blank2' data-answer=' nhận' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span>.</p>
+<div class='explanation' id='part4_q3_result' data-solution='Nguy%C3%AAn%20t%E1%BA%AFc%20th%C4%83ng%20b%E1%BA%B1ng%20electron%20l%C3%A0%20s%E1%BB%91%20electron%20nh%C6%B0%E1%BB%9Dng%20b%E1%BA%B1ng%20s%E1%BB%91%20electron%20nh%E1%BA%ADn.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part4_q4'>
+<p><strong>Câu 4:</strong><br><br>Trong một ion đa nguyên tử, <span class='blank-container'><input type='text' id='part4_q4_blank1' data-answer=' tổng' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> số oxi hóa của các nguyên tử bằng <span class='blank-container'><input type='text' id='part4_q4_blank2' data-answer=' điện tích' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> của ion đó.</p>
+<div class='explanation' id='part4_q4_result' data-solution='Quy%20t%E1%BA%AFc%20x%C3%A1c%20%C4%91%E1%BB%8Bnh%20s%E1%BB%91%20oxi%20h%C3%B3a%20cho%20ion.'></div>
+</div>
+<div class='question' id='part4_q5'>
+<p><strong>Câu 5:</strong><br><br>Để biểu diễn quá trình oxi hóa sắt (II) thành sắt (III), ta viết bán phản ứng như sau:<br>Fe⁺² → Fe⁺³ + <span class='blank-container'><input type='text' id='part4_q5_blank1' data-answer=' 1|| một' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> e.</p>
+<div class='explanation' id='part4_q5_result' data-solution='%C4%90%E1%BB%83%20t%C3%ADnh%20s%E1%BB%91%20electron%20nh%C6%B0%E1%BB%9Dng%2C%20ta%20l%E1%BA%A5y%20m%E1%BB%A9c%20oxi%20h%C3%B3a%20cao%20%28%2B3%29%20tr%E1%BB%AB%20m%E1%BB%A9c%20oxi%20h%C3%B3a%20th%E1%BA%A5p%20%28%2B2%29%20ta%20%C4%91%C6%B0%E1%BB%A3c%201%20electron.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part4_q6'>
+<p><strong>Câu 6:</strong><br><br>Trong phản ứng của thuốc tím (KMnO₄), quá trình khử manganese từ mức +7 xuống mức +2 được viết là:<br>Mn⁺⁷ + <span class='blank-container'><input type='text' id='part4_q6_blank1' data-answer=' 5|| năm' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> e → Mn⁺².</p>
+<div class='explanation' id='part4_q6_result' data-solution='%C3%81p%20d%E1%BB%A5ng%20m%E1%BA%B9o%20l%E1%BA%A5y%20m%E1%BB%A9c%20cao%20tr%E1%BB%AB%20m%E1%BB%A9c%20th%E1%BA%A5p%3A%20%28%2B7%29%20-%20%28%2B2%29%20%3D%205%20electron.%20D%E1%BA%A5u%20c%E1%BB%99ng%20electron%20%C4%91%C6%B0%E1%BB%A3c%20%C4%91%E1%BA%B7t%20%E1%BB%9F%20v%E1%BA%BF%20c%C3%B3%20s%E1%BB%91%20oxi%20h%C3%B3a%20cao%20h%C6%A1n%2C.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part4_q7'>
+<p><strong>Câu 7:</strong><br><br>Quá trình Ag → Ag⁺ + <span class='blank-container'><input type='text' id='part4_q7_blank1' data-answer=' 1' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> e được gọi là quá trình <span class='blank-container'><input type='text' id='part4_q7_blank2' data-answer=' oxi hóa|| oxy hóa' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> vì bạc đã nhường electron làm cho số oxi hóa <span class='blank-container'><input type='text' id='part4_q7_blank3' data-answer=' tăng' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> sau phản ứng.</p>
+<div class='explanation' id='part4_q7_result' data-solution='B%E1%BA%A1c%20t%E1%BB%AB%20m%E1%BB%A9c%200%20l%C3%AAn%20%2B1%20nh%C6%B0%E1%BB%9Dng%201%20electron%20%28l%E1%BA%A5y%20cao%20tr%E1%BB%AB%20th%E1%BA%A5p%3A%201%20-%200%20%3D%201%29.%20Qu%C3%A1%20tr%C3%ACnh%20nh%C6%B0%E1%BB%9Dng%20electron%20l%C3%A0%20qu%C3%A1%20tr%C3%ACnh%20oxi%20h%C3%B3a%20v%C3%A0%20l%C3%A0m%20t%C4%83ng%20s%E1%BB%91%20oxi%20h%C3%B3a%2C.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part4_q8'>
+<p><strong>Câu 8:</strong><br><br>Để biểu diễn sự thay đổi số oxi hóa của Nitrogen từ +5 về -3, ta viết bán phản ứng: N⁺⁵ + <span class='blank-container'><input type='text' id='part4_q8_blank1' data-answer=' 8|| tám' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> e → N⁻³. Đây là quá trình <span class='blank-container'><input type='text' id='part4_q8_blank2' data-answer=' khử' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> N⁺⁵.</p>
+<div class='explanation' id='part4_q8_result' data-solution='%C4%90%E1%BB%83%20t%C3%ADnh%20s%E1%BB%91%20electron%2C%20ta%20l%E1%BA%A5y%20m%E1%BB%A9c%20oxi%20h%C3%B3a%20cao%20tr%E1%BB%AB%20m%E1%BB%A9c%20oxi%20h%C3%B3a%20th%E1%BA%A5p%3A%20%28%2B5%29%20-%20%28-3%29%20%3D%208.%20V%C3%AC%20s%E1%BB%91%20oxi%20h%C3%B3a%20gi%E1%BA%A3m%20n%C3%AAn%20%C4%91%C3%A2y%20l%C3%A0%20qu%C3%A1%20tr%C3%ACnh%20nh%E1%BA%ADn%20electron%2C%20t%E1%BB%A9c%20l%C3%A0%20qu%C3%A1%20tr%C3%ACnh%20kh%E1%BB%AD%2C.'></div>
+</div>
+<div class='question' id='part4_q9'>
+<p><strong>Câu 9:</strong><br><br>Cho phương trình hóa học: <span class='blank-container'><input type='text' id='part4_q9_blank1' data-answer=' 5' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> Mg + <span class='blank-container'><input type='text' id='part4_q9_blank2' data-answer=' 12' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> HNO₃ → <span class='blank-container'><input type='text' id='part4_q9_blank3' data-answer=' 5' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> Mg(NO₃)₂ + <span class='blank-container'><input type='text' id='part4_q9_blank4' data-answer=' 1' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> N₂ + <span class='blank-container'><input type='text' id='part4_q9_blank5' data-answer=' 6' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> H₂O. Hãy điền các hệ số nguyên tối giản để hoàn thành phương trình.</p>
+<div class='explanation' id='part4_q9_result' data-solution='5Mg%20%2B%2012HNO%E2%82%83%20%E2%86%92%205Mg%28NO%E2%82%83%29%E2%82%82%20%2B%20N%E2%82%82%20%2B%206H%E2%82%82O'></div>
+</div>
+<div class='question' id='part4_q10'>
+<p><strong>Câu 10:</strong><br><br>Cho phương trình hóa học: <span class='blank-container'><input type='text' id='part4_q10_blank1' data-answer=' 3' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> Zn + <span class='blank-container'><input type='text' id='part4_q10_blank2' data-answer=' 4' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> H₂SO₄ → <span class='blank-container'><input type='text' id='part4_q10_blank3' data-answer=' 3' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> ZnSO₄ + <span class='blank-container'><input type='text' id='part4_q10_blank4' data-answer=' 1' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> S + <span class='blank-container'><input type='text' id='part4_q10_blank5' data-answer=' 4' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> H₂O. Hãy điền các hệ số nguyên tối giản để hoàn thành phương trình.</p>
+<div class='explanation' id='part4_q10_result' data-solution='3Zn%20%2B%204H%E2%82%82SO%E2%82%84%20%E2%86%92%203ZnSO%E2%82%84%20%2B%20S%20%2B%204H%E2%82%82O'></div>
+</div>
+<div class='question' id='part4_q11'>
+<p><strong>Câu 11:</strong><br><br>Cho phương trình hóa học: <span class='blank-container'><input type='text' id='part4_q11_blank1' data-answer=' 3' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> Fe₃O₄ + <span class='blank-container'><input type='text' id='part4_q11_blank2' data-answer=' 28' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> HNO₃ → <span class='blank-container'><input type='text' id='part4_q11_blank3' data-answer=' 9' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> Fe(NO₃)₃ + <span class='blank-container'><input type='text' id='part4_q11_blank4' data-answer=' 1' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> NO + <span class='blank-container'><input type='text' id='part4_q11_blank5' data-answer=' 14' class='auto-expand' style='width:60px;' oninput="var canvas=document.createElement('canvas');var context=canvas.getContext('2d');context.font=window.getComputedStyle(this).font;var textWidth=context.measureText(this.value).width;this.style.width=Math.max(60, textWidth+10)+'px';"></span> H₂O. Hãy điền các hệ số nguyên tối giản để hoàn thành phương trình.</p>
+<div class='explanation' id='part4_q11_result' data-solution='3Fe%E2%82%83O%E2%82%84%20%2B%2028HNO%E2%82%83%20%E2%86%92%209Fe%28NO%E2%82%83%29%E2%82%83%20%2B%20NO%20%2B%2014H%E2%82%82O%3Cbr%3E'></div>
+</div>
+</div>
+
+    <div style='text-align:center; margin-top:30px;'>
+      <button id='submitBtn' onclick='gradeQuiz();'>Nộp bài</button>
+    </div>
+    <script>
+      function gradeQuiz() {
+         let score = 0, total = 0;
+         document.querySelectorAll('.section').forEach(function(section) {
+           let partType = section.getAttribute('data-parttype');
+           section.querySelectorAll('.question').forEach(function(q) {
+             total++;
+             let qid = q.id;
+             let feedback = "";
+             if (partType === "1") {
+               let selected = q.querySelector('input[name="' + qid + '"]:checked');
+               let correct = q.querySelector('.explanation').getAttribute('data-answer');
+               if (!selected) {
+                 feedback = '<span style="color:red;"><strong>Bạn chưa trả lời. Đáp án đúng: ' + correct + '</strong></span>';
+               } else if (selected.value === correct) {
+                 score++;
+                 feedback = '<span style="color:green;"><strong>Đúng (' + correct + ')</strong></span>';
+               } else {
+                 feedback = '<span style="color:red;"><strong>Sai. Đáp án đúng: ' + correct + '</strong></span>';
+               }
+             } else if (partType === "2") {
+               let selectedList = q.querySelectorAll('input[name="' + qid + '"]:checked');
+               if (selectedList.length === 0) {
+                 let correct = q.querySelector('.explanation').getAttribute('data-answer');
+                 feedback = '<span style="color:red;"><strong>Bạn chưa trả lời. Đáp án đúng: ' + correct + '</strong></span>';
+               } else {
+                 let userAnswers = [];
+                 selectedList.forEach(function(el) { userAnswers.push(el.value); });
+                 let correct = q.querySelector('.explanation').getAttribute('data-answer').split(',');
+                 userAnswers.sort(); correct.sort();
+                 if (userAnswers.join() === correct.join()) {
+                   score++;
+                   feedback = '<span style="color:green;"><strong>Đúng (' + correct.join(',') + ')</strong></span>';
+                 } else {
+                   feedback = '<span style="color:red;"><strong>Sai. Đáp án đúng: ' + correct.join(',') + '</strong></span>';
+                 }
+               }
+             } else if (partType === "3") {
+               let inputElem = document.getElementById(qid + '_input');
+               let userInput = inputElem.value.trim();
+               let correctData = q.querySelector('.explanation').getAttribute('data-answer');
+               let accepted = correctData.split('||').map(s => s.trim());
+               if (!userInput) {
+                 feedback = '<span style="color:red;"><strong>Bạn chưa trả lời. Đáp án đúng: ' + accepted.join(' hoặc ') + '</strong></span>';
+               } else {
+                 if (accepted.includes(userInput)) {
+                   score++;
+                   feedback = '<span style="color:green;"><strong>Đúng</strong></span>';
+                   inputElem.style.color = 'green';
+                 } else {
+                   feedback = '<span style="color:red;"><strong>Sai. Đáp án đúng: ' + accepted.join(' hoặc ') + '</strong></span>';
+                   inputElem.style.color = 'red';
+                 }
+                 inputElem.style.fontWeight = 'bold';
+                 inputElem.disabled = true;
+               }
+             } else if (partType === "4") {
+               let inputs = q.querySelectorAll('input.auto-expand');
+               let blankResults = [];
+               inputs.forEach(function(inp, index) {
+                 let accepted = inp.getAttribute('data-answer').split('||').map(s => s.trim());
+                 let userAnswer = inp.value.trim();
+                 if (userAnswer !== "") {
+                   if (accepted.includes(userAnswer)) {
+                     blankResults.push({blank: index+1, correct: true, answer: userAnswer, accepted: accepted});
+                   } else {
+                     blankResults.push({blank: index+1, correct: false, answer: userAnswer, accepted: accepted});
+                   }
+                 } else {
+                   blankResults.push({blank: index+1, answered: false, accepted: accepted});
+                 }
+               });
+               inputs.forEach(function(inp, index) {
+                 let res = blankResults[index];
+                 if (res.answered === false) { }
+                 else {
+                   let span = document.createElement('span');
+                   span.style.fontWeight = 'bold';
+                   if (res.correct) {
+                     span.style.color = 'green';
+                     span.textContent = res.answer;
+                   } else {
+                     span.style.color = 'red';
+                     span.textContent = res.answer;
+                   }
+                   inp.parentNode.replaceChild(span, inp);
+                 }
+               });
+               let wrongBlanks = [];
+               let unansweredBlanks = [];
+               blankResults.forEach(function(r) {
+                 if (r.answered === false) { unansweredBlanks.push(r.blank); }
+                 else if (!r.correct) { wrongBlanks.push(r.blank); }
+               });
+               if (wrongBlanks.length === 0 && unansweredBlanks.length === 0) {
+                 feedback = '<span style="color:green; font-weight:bold;">Đúng</span>';
+                 score++;
+               } else {
+                 let answerList = "";
+                 blankResults.forEach(function(r) {
+                   answerList += r.blank + ') ' + r.accepted.join(', hoặc ') + '<br>';
+                 });
+                 feedback = '<span style="color:red; font-weight:bold;">Sai.';
+                 if (wrongBlanks.length > 0) {
+                   feedback += ' Bạn trả lời sai vị trí ' + wrongBlanks.join(', ') + '.';
+                 }
+                 if (unansweredBlanks.length > 0) {
+                   feedback += ' Bạn chưa trả lời vị trí ' + unansweredBlanks.join(', ') + '.';
+                 }
+                 feedback += '<br>Đáp án đúng là:<br>' + answerList + '</span>';
+               }
+             } else if (partType === "5") {
+               let correctForQuestion = true;
+               q.querySelectorAll('.dropzone').forEach(function(dropZone) {
+                 let expected = dropZone.getAttribute('data-expected').trim();
+                 let userItems = Array.from(dropZone.querySelectorAll('.draggable-item')).map(e => e.getAttribute('data-label')).sort();
+                 let expectedItems = expected ? expected.split(',').map(s => s.trim()).sort() : [];
+                 if (JSON.stringify(userItems) !== JSON.stringify(expectedItems)) {
+                   correctForQuestion = false;
+                 }
+               });
+               if (correctForQuestion) {
+                 feedback = '<span style="color:green; font-weight:bold;">Đúng</span>';
+                 score++;
+               } else {
+                 let answerPairs = q.querySelector('.explanation').getAttribute('data-answer-pairs');
+                 feedback = '<span style="color:red; font-weight:bold;">Sai. Đáp án đúng là:<br>' + answerPairs.replace(/ \|\| /g, "<br>") + '</span>';
+               }
+             }
+             let expl = q.querySelector('.explanation');
+             expl.innerHTML = feedback;
+             let encodedSolution = expl.getAttribute('data-solution');
+             let solution = encodedSolution ? decodeURIComponent(encodedSolution) : "";
+             let cleanedSolution = solution.replace(/<br\s*\/?>/gi, '').trim();
+             if (cleanedSolution !== "") {
+                 expl.innerHTML += '<div style="margin-top:10px;"><strong>Lời giải:</strong></div><div>' + solution + '</div>';
+             }
+             expl.style.display = "block";
+           });
+         });
+         document.getElementById('scoreDisplay').innerHTML = 'Tổng số điểm: ' + score + ' / ' + total;
+         document.querySelectorAll('input, select').forEach(function(inp) { inp.disabled = true; });
+         let sb = document.getElementById('submitBtn'); if(sb) sb.disabled = true;
+         MathJax.typesetPromise();
+      }
+    </script>
+  </div>
+</body>
+</html>
